@@ -5,3 +5,4 @@ pillow
 tensorflow==2.15.0
 google-genai
 bcrypt 
+streamlit-js-eval
