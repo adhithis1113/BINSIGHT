@@ -1664,8 +1664,9 @@ PAGE_FUNCS = {"overview": page_overview, "detect": page_detect, "map": page_map,
 
 
 
+
 def page_auth():
-    """Display the BINSIGHT login and registration page."""
+    """Display the BINSIGHT citizen login and registration page."""
 
     st.title("Welcome to BINSIGHT")
     st.write("Sign in to continue, or create a citizen account.")
@@ -1678,23 +1679,10 @@ def page_auth():
         with st.form("binsight_login_form"):
             email = st.text_input("Email", key="login_email")
             password = st.text_input(
-                "Password",
-                type="password",
-                key="login_password"
+                "Password", type="password", key="login_password"
             )
             login_clicked = st.form_submit_button(
-                "Login",
-                use_container_width=True
-            )
-
-        with st.popover("🔑 View Demo Credentials"):
-            st.markdown("### 👤 Citizen Demo Account")
-            st.code(
-                "Email: citizen.demo@binsight.test\n"
-                "Password: CitizenDemo123"
-            )
-            st.caption(
-                "For hackathon demonstration only."
+                "Login", use_container_width=True
             )
 
         if login_clicked:
@@ -1715,30 +1703,24 @@ def page_auth():
                     )
                 else:
                     st.error("Invalid email or password.")
-  
+
     with signup_tab:
         st.subheader("Create a citizen account")
 
         with st.form("binsight_signup_form"):
             name = st.text_input("Full name", key="signup_name")
-            signup_email = st.text_input(
-                "Email",
-                key="signup_email"
-            )
+            signup_email = st.text_input("Email", key="signup_email")
             signup_password = st.text_input(
                 "Password (minimum 8 characters)",
-                type="password",
-                key="signup_password"
+                type="password", key="signup_password"
             )
             confirm_password = st.text_input(
                 "Confirm password",
-                type="password",
-                key="signup_confirm_password"
+                type="password", key="signup_confirm_password"
             )
 
             signup_clicked = st.form_submit_button(
-                "Create Account",
-                use_container_width=True
+                "Create Account", use_container_width=True
             )
 
         if signup_clicked:
@@ -1746,17 +1728,13 @@ def page_auth():
                 st.error("The passwords do not match.")
             else:
                 success, message = create_citizen_account(
-                    name,
-                    signup_email,
-                    signup_password
+                    name, signup_email, signup_password
                 )
-
                 if success:
                     st.success(message + " You can now log in.")
                 else:
                     st.error(message)
 
-    # Back button: outside BOTH tabs, but inside page_auth()
     st.divider()
 
     if st.button(
