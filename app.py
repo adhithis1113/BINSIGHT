@@ -1211,38 +1211,16 @@ def page_advice():
 
 
 
+
 def page_chat():
     page_header("chat")
-
-    languages = {
-        "English": "English",
-        "ಕನ್ನಡ (Kannada)": "Kannada (ಕನ್ನಡ script)",
-        "हिन्दी (Hindi)": "Hindi (हिन्दी script)",
-        "தமிழ் (Tamil)": "Tamil (தமிழ் script)",
-        "తెలుగు (Telugu)": "Telugu (తెలుగు script)",
-        "മലയാളം (Malayalam)": "Malayalam (മലയാളം script)",
-    }
-
-    tts_languages = {
-        "English": "en-IN",
-        "ಕನ್ನಡ (Kannada)": "kn-IN",
-        "हिन्दी (Hindi)": "hi-IN",
-        "தமிழ் (Tamil)": "ta-IN",
-        "తెలుగు (Telugu)": "te-IN",
-        "മലയാളം (Malayalam)": "ml-IN",
-    }
-
-    lang = st.selectbox(
-        "🌐 Choose your language",
-        list(languages.keys())
-    )
-    answer_language = languages[lang]
 
     audio = (
         st.audio_input("🎤 Speak your question")
         if hasattr(st, "audio_input")
         else None
     )
+
     q = st.text_input(
         "…or type it",
         placeholder="Ask about waste, recycling, or a ward"
@@ -1263,12 +1241,11 @@ def page_chat():
             st.warning("Voice questions need Gemini to be enabled.")
             return
 
-        # Basic fallback for when Gemini is unavailable.
         ans = (
             f"{top['Zone']} is the fullest ward at "
             f"{int(top['Fill %'])}% ({top['Status']}). "
-            "Prioritise collection there. For recycling advice, enable "
-            "Gemini to get a detailed answer."
+            "Prioritise collection there. For recycling advice, "
+            "enable Gemini to get a detailed answer."
         )
 
     else:
@@ -1276,6 +1253,8 @@ def page_chat():
             prompt = (
                 "You are BINSIGHT AI, a helpful generative AI assistant "
                 "for smart-city waste management in Bengaluru.\n\n"
+                "Answer only in English. Do not translate responses "
+                "into other languages or use multilingual output.\n\n"
                 "Answer questions about waste management, segregation, "
                 "recycling, reuse, composting, and waste reduction. Give "
                 "practical suggestions for homes, colleges, and communities. "
@@ -1288,8 +1267,6 @@ def page_chat():
                 "collection or disposal services. General recycling "
                 "questions can be answered even if the data does not "
                 "contain the answer. Keep responses friendly and actionable.\n\n"
-                f"Answer in {answer_language}, using natural language "
-                "and the appropriate script.\n\n"
                 f"Digital-twin data (simulated {days} day(s) ahead):\n"
                 f"{twin_text(view)}\n\n"
                 f"{'The question is in the attached audio.' if audio else 'User question: ' + q.strip()}"
@@ -1309,9 +1286,7 @@ def page_chat():
             return
 
     st.success(ans)
-    speak_button(ans, tts_languages[lang])
-
-
+    speak_button(ans, "en-IN")
 
 def page_vision():
     page_header("vision")
