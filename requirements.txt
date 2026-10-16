@@ -3,4 +3,5 @@ pandas
 numpy
 pillow
 tensorflow==2.15.0
-google-genai 
+google-genai
+bcrypt 
