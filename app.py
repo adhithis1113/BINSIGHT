@@ -271,7 +271,7 @@ def load_my_model():
     )
     except Exception as e:
         st.error(f"Model loading failed: {type(e).__name__}: {e}")
-    raise
+        raise
 
     with open(LABELS_PATH, "r") as f:
         labels = []
