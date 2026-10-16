@@ -1,0 +1,7 @@
+0 cardboard
+1 glass
+2 metal
+3 organic
+4 other
+5 paper
+6 plastic

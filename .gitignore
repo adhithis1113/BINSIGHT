@@ -1,0 +1,22 @@
+# Python environment and cache
+venv/
+__pycache__/
+*.pyc
+
+# Secrets and private data
+.env
+.streamlit/secrets.toml
+users.json
+
+# Dataset folders
+dataset_auto/
+testset_auto/
+
+# Backup files
+BINSIGHT_FULL_BACKUP_*/
+binsight_saved_model/
+app_backup*.py
+app_before_*.py
+app_original_backup.py
+backup_before_login_*/
+backup_before_new_ai/
