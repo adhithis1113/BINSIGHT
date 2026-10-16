@@ -251,44 +251,51 @@ for w in WASTE_TYPES:
 # ---------------- VISION CLASSIFIER (runs on the device, no internet needed) ----------------
 
 # ---------------- VISION CLASSIFIER ----------------
-MODEL_PATH = "binsight_saved_model"
+MODEL_PATH = "keras_model_new.h5"
 LABELS_PATH = "labels_new.txt"
 
 MODEL_AVAILABLE = (
-    os.path.exists(os.path.join(MODEL_PATH, "saved_model.pb"))
+    os.path.exists(MODEL_PATH)
     and os.path.exists(LABELS_PATH)
 )
 
-
+@st.cache_resource
 @st.cache_resource
 def load_my_model():
     import tensorflow as tf
 
-    model = tf.saved_model.load(MODEL_PATH)
-    predict_fn = model.signatures["serving_default"]
+    model = tf.keras.models.load_model(MODEL_PATH)
 
     with open(LABELS_PATH, "r") as f:
-        labels = [
-            line.strip().split(" ", 1)[1].lower()
-            for line in f
-            if line.strip()
-        ]
+        labels = []
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
 
-    output_shape = predict_fn.structured_outputs["output_0"].shape
+            parts = line.split(maxsplit=1)
+
+            # Supports labels such as "0 cardboard"
+            if len(parts) == 2 and parts[0].isdigit():
+                labels.append(parts[1].lower())
+            else:
+                labels.append(line.lower())
+
+    output_shape = model.output_shape
     n_out = output_shape[-1]
 
     if n_out != len(labels):
         raise ValueError(
-            f"New model predicts {n_out} classes, "
+            f"Model predicts {n_out} classes, "
             f"but {LABELS_PATH} contains {len(labels)} labels."
         )
 
-    return predict_fn, labels, (224, 224)
+    return model, labels, (224, 224)
 
 
 @st.cache_data(show_spinner=False)
 def classify_bytes(data):
-    predict_fn, labels, size = load_my_model()
+    model, labels, size = load_my_model()
 
     img = ImageOps.fit(
         Image.open(io.BytesIO(data)).convert("RGB"),
@@ -296,17 +303,14 @@ def classify_bytes(data):
         Image.Resampling.LANCZOS,
     )
 
-    # The model includes its own rescaling layer.
-    # Pass pixel values in the 0–255 range.
     arr = np.asarray(img, dtype=np.float32)
     batch = arr[np.newaxis, ...]
 
-    import tensorflow as tf
-    outputs = predict_fn(inputs=tf.convert_to_tensor(batch))
-    pred = outputs["output_0"].numpy()[0]
+    pred = model.predict(batch, verbose=0)[0]
 
     best = int(np.argmax(pred))
     return labels[best], float(pred[best])
+
 
 
 
