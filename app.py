@@ -264,8 +264,12 @@ MODEL_AVAILABLE = (
 def load_my_model():
     import tensorflow as tf
 
+    try:
     model = tf.keras.models.load_model(MODEL_PATH)
-
+except Exception as e:
+    st.error(f"Model loading failed: {type(e).__name__}: {e}")
+    raise
+    
     with open(LABELS_PATH, "r") as f:
         labels = []
         for line in f:
