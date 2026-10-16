@@ -272,7 +272,9 @@ def load_my_model():
     except Exception as e:
         st.error(f"Model loading failed: {type(e).__name__}: {e}")
         raise
-
+    st.write("DEBUG — Model file:", MODEL_PATH)
+    st.write("DEBUG — Labels file:", LABELS_PATH)
+    st.write("DEBUG — Model output shape:", model.output_shape)
     with open(LABELS_PATH, "r") as f:
         labels = []
         for line in f:
